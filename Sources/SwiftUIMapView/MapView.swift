@@ -78,6 +78,8 @@ public struct MapView: UIViewRepresentable {
      Likewise, setting the value of this binding to a value selects the given annotations.
      */
     @Binding var selectedAnnotations: [MapViewAnnotation]
+    
+    @Binding var calloutTappedAnnotation: MapViewAnnotation?
 
     // MARK: Initializer
     /**
@@ -109,6 +111,7 @@ public struct MapView: UIViewRepresentable {
         self.userTrackingMode = userTrackingMode
         self.annotations = annotations
         self._selectedAnnotations = selectedAnnotations
+        self._calloutTappedAnnotation = .constant(nil)
     }
 
     // MARK: - UIViewRepresentable
@@ -225,6 +228,33 @@ public struct MapView: UIViewRepresentable {
         }
         
         // MARK: MKMapViewDelegate
+        public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            var annotationView: MKAnnotationView?
+            if let annotation = annotation as? MapViewAnnotation {
+               annotationView = setupMapViewAnnotationView(for: annotation, on: mapView)
+            }
+            return annotationView
+        }
+        
+        private func setupMapViewAnnotationView(for annotation: MapViewAnnotation, on mapView: MKMapView) -> MKAnnotationView {
+            let reuseIndentifier = MKMapViewDefaultAnnotationViewReuseIdentifier
+            let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIndentifier, for: annotation)
+            annotationView.canShowCallout = true
+            let rightButton = UIButton(type: .detailDisclosure)
+            annotationView.rightCalloutAccessoryView = rightButton
+            return annotationView
+        }
+        
+        public func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+            guard let mapAnnotation = view.annotation as? MapViewAnnotation else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.context.calloutTappedAnnotation = mapAnnotation
+            }
+        }
+        
         public func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
             guard let mapAnnotation = view.annotation as? MapViewAnnotation else {
                 return
