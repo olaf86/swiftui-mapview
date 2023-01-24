@@ -20,7 +20,6 @@ import UIKit
  - Copyright: 2020—2022 Sören Gade
  */
 @available(iOS, introduced: 13.0)
-@available(iOS, deprecated: 14.0, message: "Please consider using the official Map view.")
 public struct MapView: UIViewRepresentable {
     
     // MARK: Properties
