@@ -101,7 +101,8 @@ public struct MapView: UIViewRepresentable {
                 showsUserLocation: Bool = true,
                 userTrackingMode: MKUserTrackingMode = .none,
                 annotations: [MapViewAnnotation] = [],
-                selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([])) {
+                selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([]),
+                calloutTappedAnnotation: Binding<MapViewAnnotation?> = .constant(nil)) {
         self.mapType = mapType
         self._region = region
         self.isZoomEnabled = isZoomEnabled
@@ -111,7 +112,7 @@ public struct MapView: UIViewRepresentable {
         self.userTrackingMode = userTrackingMode
         self.annotations = annotations
         self._selectedAnnotations = selectedAnnotations
-        self._calloutTappedAnnotation = .constant(nil)
+        self._calloutTappedAnnotation = calloutTappedAnnotation
     }
 
     // MARK: - UIViewRepresentable
