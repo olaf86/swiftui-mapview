@@ -14,6 +14,8 @@ class ExampleAnnotation: NSObject, MapViewAnnotation, Identifiable {
     
     let title: String?
     
+    let subtitle: String?
+    
     let id = UUID()
     
     let clusteringIdentifier: String? = "exampleCluster"
@@ -22,9 +24,19 @@ class ExampleAnnotation: NSObject, MapViewAnnotation, Identifiable {
     
     let tintColor: UIColor? = .green
     
-    init(title: String, coordinate: CLLocationCoordinate2D) {
-        self.title = title
+    let calloutLeftIconImage: UIImage?
+    
+    let calloutRightButtonImage: UIImage? = UIImage(systemName: "arrow.forward.circle")
+    
+    init(coordinate: CLLocationCoordinate2D,
+         title: String,
+         subtitle: String? = nil,
+         calloutLeftIconImage: UIImage? = UIImage(systemName: "note.text")
+         ) {
         self.coordinate = coordinate
+        self.title = title
+        self.subtitle = subtitle
+        self.calloutLeftIconImage = calloutLeftIconImage
     }
     
 }
@@ -32,8 +44,8 @@ class ExampleAnnotation: NSObject, MapViewAnnotation, Identifiable {
 extension Array where Element == ExampleAnnotation {
     static var examples: [ExampleAnnotation] = {
         [
-            ExampleAnnotation(title: "Apple Park", coordinate: .applePark),
-            ExampleAnnotation(title: "Infinite Loop", coordinate: .inifiniteLoop),
+            ExampleAnnotation(coordinate: .applePark, title: "Apple Park", subtitle: "Apple Park is the corporate headquarters of Apple Inc."),
+            ExampleAnnotation(coordinate: .inifiniteLoop, title: "Infinite Loop", calloutLeftIconImage: UIImage(systemName: "music.note")),
         ]
     }()
 }

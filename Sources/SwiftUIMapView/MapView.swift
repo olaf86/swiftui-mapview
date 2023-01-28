@@ -79,7 +79,10 @@ public struct MapView: UIViewRepresentable {
      */
     @Binding var selectedAnnotations: [MapViewAnnotation]
     
-    @Binding var calloutTappedAnnotation: MapViewAnnotation?
+    /**
+     A closure that be called on the callout of an annotation tapped.
+     */
+    var onAnnotationCalloutTapped: (MapViewAnnotation) -> Void
 
     // MARK: Initializer
     /**
@@ -92,6 +95,7 @@ public struct MapView: UIViewRepresentable {
         - userTrackingMode: The user tracking mode.
         - annotations: A list of `MapAnnotation`s that should be displayed on the map.
         - selectedAnnotation: A binding to the currently selected annotation, or `nil`.
+        - onAnnotationCalloutTapped: A closure that be called on the callout of an annotation tapped.
      */
     public init(mapType: MKMapType = .standard,
                 region: Binding<MKCoordinateRegion?> = .constant(nil),
@@ -102,7 +106,7 @@ public struct MapView: UIViewRepresentable {
                 userTrackingMode: MKUserTrackingMode = .none,
                 annotations: [MapViewAnnotation] = [],
                 selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([]),
-                calloutTappedAnnotation: Binding<MapViewAnnotation?> = .constant(nil)) {
+                onAnnotationCalloutTapped: @escaping (MapViewAnnotation) -> Void = { _ in }) {
         self.mapType = mapType
         self._region = region
         self.isZoomEnabled = isZoomEnabled
@@ -112,7 +116,7 @@ public struct MapView: UIViewRepresentable {
         self.userTrackingMode = userTrackingMode
         self.annotations = annotations
         self._selectedAnnotations = selectedAnnotations
-        self._calloutTappedAnnotation = calloutTappedAnnotation
+        self.onAnnotationCalloutTapped = onAnnotationCalloutTapped
     }
 
     // MARK: - UIViewRepresentable
@@ -241,8 +245,16 @@ public struct MapView: UIViewRepresentable {
             let reuseIndentifier = MKMapViewDefaultAnnotationViewReuseIdentifier
             let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIndentifier, for: annotation)
             annotationView.canShowCallout = true
-            let rightButton = UIButton(type: .detailDisclosure)
-            annotationView.rightCalloutAccessoryView = rightButton
+            
+            if let leftIconImage = annotation.calloutLeftIconImage {
+                let leftView = UIImageView(image: leftIconImage)
+                annotationView.leftCalloutAccessoryView = leftView
+            }
+            if let rightButtonImage = annotation.calloutRightButtonImage {
+                let rightView = UIButton(type: .detailDisclosure)
+                rightView.setImage(rightButtonImage, for: .normal)
+                annotationView.rightCalloutAccessoryView = rightView
+            }
             return annotationView
         }
         
@@ -251,8 +263,10 @@ public struct MapView: UIViewRepresentable {
                 return
             }
             
-            DispatchQueue.main.async {
-                self.context.calloutTappedAnnotation = mapAnnotation
+            if (control == view.rightCalloutAccessoryView) {
+                DispatchQueue.main.async {
+                    self.context.onAnnotationCalloutTapped(mapAnnotation)
+                }
             }
         }
         

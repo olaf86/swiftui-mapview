@@ -14,7 +14,7 @@ struct ContentView: View {
     
     let type: MKMapType = .standard
     @State var region: MKCoordinateRegion? = MKCoordinateRegion(center: .applePark, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-    let trackingMode: MKUserTrackingMode = .none
+    let trackingMode: MKUserTrackingMode = .followWithHeading
     let annotations: [MapViewAnnotation] = [ExampleAnnotation].examples
     @State var selectedAnnotations: [MapViewAnnotation] = []
     
@@ -24,8 +24,15 @@ struct ContentView: View {
                     region: self.$region,
                     userTrackingMode: self.trackingMode,
                     annotations: self.annotations,
-                    selectedAnnotations: self.$selectedAnnotations)
-                .edgesIgnoringSafeArea(.all)
+                    selectedAnnotations: self.$selectedAnnotations
+            ) { tappedAnnotation in
+                guard let title = tappedAnnotation.title as? String else {
+                    print("no title")
+                    return
+                }
+                print(title)
+            }
+            .edgesIgnoringSafeArea(.all)
             
             ForEach(self.selectedAnnotations.compactMap { $0 as? ExampleAnnotation }) { annotation in
                 Text("\( annotation.title ?? "" )")

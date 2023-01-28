@@ -45,4 +45,11 @@ public protocol MapViewAnnotation: MKAnnotation {
         get
     }
     
+    var calloutLeftIconImage: UIImage? {
+        get
+    }
+    
+    var calloutRightButtonImage: UIImage? {
+        get
+    }
 }

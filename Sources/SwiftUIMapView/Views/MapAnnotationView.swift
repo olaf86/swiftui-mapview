@@ -17,6 +17,8 @@ import MapKit
  */
 class MapAnnotationView: MKMarkerAnnotationView {
     
+    var calloutLeftIconImage: UIImage?
+    
     override var annotation: MKAnnotation? {
         willSet {
             guard let mapAnnotation = newValue as? MapViewAnnotation else {
@@ -26,6 +28,7 @@ class MapAnnotationView: MKMarkerAnnotationView {
             clusteringIdentifier = mapAnnotation.clusteringIdentifier
             markerTintColor = mapAnnotation.tintColor
             glyphImage = mapAnnotation.glyphImage
+            calloutLeftIconImage = mapAnnotation.calloutLeftIconImage
         }
     }
     
