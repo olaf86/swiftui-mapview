@@ -34,7 +34,7 @@
 		45588B06249CE47000411197 /* SwiftUIMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "SwiftUIMapView::SwiftUIMapView::Product" /* SwiftUIMapView.framework */; };
 		45588B07249CE47000411197 /* SwiftUIMapView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = "SwiftUIMapView::SwiftUIMapView::Product" /* SwiftUIMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4592898D24A63F9E0001F8CA /* MapView+Xcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4592898C24A63F9E0001F8CA /* MapView+Xcode.swift */; };
-		OBJ_28 /* MapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* MapAnnotation.swift */; };
+		OBJ_28 /* MapViewAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* MapViewAnnotation.swift */; };
 		OBJ_29 /* MapAnnotationClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* MapAnnotationClusterView.swift */; };
 		OBJ_30 /* MapAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* MapAnnotationView.swift */; };
 		OBJ_31 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_12 /* MapView.swift */; };
@@ -104,7 +104,7 @@
 		OBJ_16 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		OBJ_22 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		OBJ_9 /* MapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAnnotation.swift; sourceTree = "<group>"; };
+		OBJ_9 /* MapViewAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewAnnotation.swift; sourceTree = "<group>"; };
 		"SwiftUIMapView::SwiftUIMapView::Product" /* SwiftUIMapView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftUIMapView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"SwiftUIMapView::SwiftUIMapViewTests::Product" /* SwiftUIMapViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = SwiftUIMapViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -231,7 +231,7 @@
 			children = (
 				451DD1492400853E00CBDA1A /* Views */,
 				OBJ_12 /* MapView.swift */,
-				OBJ_9 /* MapAnnotation.swift */,
+				OBJ_9 /* MapViewAnnotation.swift */,
 				451DD14B24008FC400CBDA1A /* MKMapView+MapViewAnnotation.swift */,
 				451525AA2404568600027181 /* CoreLocation+Equatable.swift */,
 				4592898C24A63F9E0001F8CA /* MapView+Xcode.swift */,
@@ -379,7 +379,7 @@
 			files = (
 				4592898D24A63F9E0001F8CA /* MapView+Xcode.swift in Sources */,
 				451DD14C24008FC400CBDA1A /* MKMapView+MapViewAnnotation.swift in Sources */,
-				OBJ_28 /* MapAnnotation.swift in Sources */,
+				OBJ_28 /* MapViewAnnotation.swift in Sources */,
 				OBJ_29 /* MapAnnotationClusterView.swift in Sources */,
 				OBJ_30 /* MapAnnotationView.swift in Sources */,
 				OBJ_31 /* MapView.swift in Sources */,
