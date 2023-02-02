@@ -13,38 +13,45 @@ import MapKit
 struct ContentView: View {
     
     let type: MKMapType = .standard
-    @State var region: MKCoordinateRegion? = MKCoordinateRegion(center: .applePark, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-    let trackingMode: MKUserTrackingMode = .followWithHeading
+    @State private var region: MKCoordinateRegion? = MKCoordinateRegion(center: .applePark, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+    @State private var trackingMode: MKUserTrackingMode =
+        CLLocationManager.headingAvailable() ? .followWithHeading : .follow
     let annotations: [MapViewAnnotation] = [ExampleAnnotation].examples
     @State var selectedAnnotations: [MapViewAnnotation] = []
     
     var body: some View {
         VStack {
-            MapView(mapType: self.type,
-                    region: self.$region,
-                    userTrackingMode: self.trackingMode,
-                    annotations: self.annotations,
-                    selectedAnnotations: self.$selectedAnnotations
+            MapView(mapType: type,
+                    region: $region,
+                    userTrackingMode: $trackingMode,
+                    annotations: annotations,
+                    selectedAnnotations: $selectedAnnotations
             ) { tappedAnnotation in
-                guard let title = tappedAnnotation.title as? String else {
-                    print("no title")
-                    return
-                }
-                print(title)
+                print((tappedAnnotation.title ?? "no title")!)
             }
             .edgesIgnoringSafeArea(.all)
             
-            ForEach(self.selectedAnnotations.compactMap { $0 as? ExampleAnnotation }) { annotation in
+            ForEach(selectedAnnotations.compactMap { $0 as? ExampleAnnotation }) { annotation in
                 Text("\( annotation.title ?? "" )")
             }
             
-            if self.region != nil {
-                Text("\( self.regionToString(self.region!) )")
+            if region != nil {
+                Text("\( regionToString(region!) )")
+            }
+            
+            Button(action: {
+                if (trackingMode == .none) {
+                    trackingMode = CLLocationManager.headingAvailable() ? .followWithHeading : .follow
+                } else {
+                    trackingMode = .none
+                }
+            }) {
+                Text("Switch MKUserTrackingMode")
             }
         }
         .onAppear {
             // this is required to display the user's current location
-            self.requestLocationUsage()
+            requestLocationUsage()
         }
     }
     
@@ -54,9 +61,8 @@ struct ContentView: View {
     
     let locationManager = CLLocationManager()
     private func requestLocationUsage() {
-        self.locationManager.requestWhenInUseAuthorization()
+        locationManager.requestWhenInUseAuthorization()
     }
-    
 }
 
 #if DEBUG
