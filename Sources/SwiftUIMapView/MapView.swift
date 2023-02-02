@@ -34,33 +34,11 @@ public struct MapView: UIViewRepresentable {
     Note: The region might not be used as-is, as it might need to be fitted to the view's bounds. See [regionThatFits(_:)](https://developer.apple.com/documentation/mapkit/mkmapview/1452371-regionthatfits).
      */
     @Binding var region: MKCoordinateRegion?
-
-    /**
-     Determines whether the map can be zoomed.
-    */
-    let isZoomEnabled: Bool
-
-    /**
-     Determines whether the map can be scrolled.
-    */
-    let isScrollEnabled: Bool
- 
-    /**
-     Determines whether the map can be rotated.
-    */
-    let isRotateEnabled: Bool
-    
-    /**
-     Determines whether the current user location is displayed.
-     
-     This requires the `NSLocationWhenInUseUsageDescription` key in the Info.plist to be set. In addition, you need to call [`CLLocationManager.requestWhenInUseAuthorization()`](https://developer.apple.com/documentation/corelocation/cllocationmanager/1620562-requestwheninuseauthorization) to request for permission.
-     */
-    let showsUserLocation: Bool
     
     /**
      Sets the map's user tracking mode.
      */
-    let userTrackingMode: MKUserTrackingMode
+    @Binding var userTrackingMode: MKUserTrackingMode
     
     /**
      Annotations that are displayed on the map.
@@ -83,6 +61,13 @@ public struct MapView: UIViewRepresentable {
      A closure that be called on the callout of an annotation tapped.
      */
     var onAnnotationCalloutTapped: (MapViewAnnotation) -> Void
+    
+    /**
+     A Boolean that indicates whether the user location is available.
+     Typically, it changes to true immediately after calling `MKMapViewDelegate`.`mapViewWillStartLocatingUser`.
+     In addition, it changes to false immediately after calling `MKMapViewDelegate`.`mapViewDidStopLocatingUser`.
+     */
+    @State private var isUserLocationAvailable: Bool = false
 
     // MARK: Initializer
     /**
@@ -91,7 +76,6 @@ public struct MapView: UIViewRepresentable {
      - Parameters:
         - mapType: The map type to display.
         - region: The region to display.
-        - showsUserLocation: Whether to display the user's current location.
         - userTrackingMode: The user tracking mode.
         - annotations: A list of `MapAnnotation`s that should be displayed on the map.
         - selectedAnnotation: A binding to the currently selected annotation, or `nil`.
@@ -99,21 +83,13 @@ public struct MapView: UIViewRepresentable {
      */
     public init(mapType: MKMapType = .standard,
                 region: Binding<MKCoordinateRegion?> = .constant(nil),
-                isZoomEnabled: Bool = true,
-                isScrollEnabled: Bool = true,
-                isRotateEnabled: Bool = true,
-                showsUserLocation: Bool = true,
-                userTrackingMode: MKUserTrackingMode = .none,
+                userTrackingMode: Binding<MKUserTrackingMode> = .constant(.none),
                 annotations: [MapViewAnnotation] = [],
                 selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([]),
                 onAnnotationCalloutTapped: @escaping (MapViewAnnotation) -> Void = { _ in }) {
         self.mapType = mapType
         self._region = region
-        self.isZoomEnabled = isZoomEnabled
-        self.isScrollEnabled = isScrollEnabled
-        self.isRotateEnabled = isRotateEnabled
-        self.showsUserLocation = showsUserLocation
-        self.userTrackingMode = userTrackingMode
+        self._userTrackingMode = userTrackingMode
         self.annotations = annotations
         self._selectedAnnotations = selectedAnnotations
         self.onAnnotationCalloutTapped = onAnnotationCalloutTapped
@@ -146,11 +122,9 @@ public struct MapView: UIViewRepresentable {
         if let mapRegion = region {
             mapView.setRegion(mapRegion, animated: false)
         }
-        mapView.isZoomEnabled = isZoomEnabled
-        mapView.isScrollEnabled = isScrollEnabled
-        mapView.isRotateEnabled = isRotateEnabled
-        mapView.showsUserLocation = showsUserLocation
-        mapView.setUserTrackingMode(userTrackingMode, animated: false)
+        mapView.isZoomEnabled = true
+        mapView.isRotateEnabled = true
+        mapView.showsUserLocation = userTrackingMode != .none
     }
 
     public func updateUIView(_ mapView: MKMapView, context: UIViewRepresentableContext<MapView>) {
@@ -164,8 +138,23 @@ public struct MapView: UIViewRepresentable {
      */
     private func configureView(_ mapView: MKMapView, context: UIViewRepresentableContext<MapView>) {
         // annotation configuration
+        updateUserTrackingMode(in: mapView)
         updateAnnotations(in: mapView)
         updateSelectedAnnotation(in: mapView)
+    }
+    
+    /**
+     Updates the `UserTrackingMode` of the `MapView`.
+     */
+    private func updateUserTrackingMode(in mapView: MKMapView) {
+        mapView.isScrollEnabled = userTrackingMode == .none
+        if !isUserLocationAvailable {
+            return
+        }
+        if mapView.userTrackingMode == userTrackingMode {
+            return
+        }
+        mapView.setUserTrackingMode(userTrackingMode, animated: true)
     }
     
     /**
@@ -231,17 +220,23 @@ public struct MapView: UIViewRepresentable {
         }
         
         // MARK: MKMapViewDelegate
-        public func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-            if self.context.userTrackingMode != .none {
-                mapView.setCenter(userLocation.coordinate, animated: true)
-                DispatchQueue.main.async {
-                    self.context.region = mapView.region
-                }
+        
+        public func mapViewWillStartLocatingUser(_ mapView: MKMapView) {
+            DispatchQueue.main.async {
+                self.context.isUserLocationAvailable = true
+            }
+        }
+        
+        public func mapViewDidStopLocatingUser(_ mapView: MKMapView) {
+            DispatchQueue.main.async {
+                self.context.isUserLocationAvailable = false
             }
         }
         
         public func mapView(_ mapView: MKMapView, didChange mode: MKUserTrackingMode, animated: Bool) {
-            //TODO: 
+            DispatchQueue.main.async {
+                self.context.userTrackingMode = mode
+            }
         }
         
         public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -304,7 +299,6 @@ public struct MapView: UIViewRepresentable {
                 self.context.selectedAnnotations.remove(at: index)
             }
         }
-        
     }
     
 }
