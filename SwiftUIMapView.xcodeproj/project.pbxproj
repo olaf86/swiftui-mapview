@@ -34,6 +34,7 @@
 		45588B06249CE47000411197 /* SwiftUIMapView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "SwiftUIMapView::SwiftUIMapView::Product" /* SwiftUIMapView.framework */; };
 		45588B07249CE47000411197 /* SwiftUIMapView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = "SwiftUIMapView::SwiftUIMapView::Product" /* SwiftUIMapView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4592898D24A63F9E0001F8CA /* MapView+Xcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4592898C24A63F9E0001F8CA /* MapView+Xcode.swift */; };
+		ED0C5A39298E10AC005926EC /* BorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0C5A38298E10AC005926EC /* BorderModifier.swift */; };
 		OBJ_28 /* MapViewAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* MapViewAnnotation.swift */; };
 		OBJ_29 /* MapAnnotationClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* MapAnnotationClusterView.swift */; };
 		OBJ_30 /* MapAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* MapAnnotationView.swift */; };
@@ -97,6 +98,7 @@
 		451DD14B24008FC400CBDA1A /* MKMapView+MapViewAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MKMapView+MapViewAnnotation.swift"; sourceTree = "<group>"; };
 		45588B04249CE24000411197 /* SwiftUIMapView.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; path = SwiftUIMapView.podspec; sourceTree = "<group>"; };
 		4592898C24A63F9E0001F8CA /* MapView+Xcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapView+Xcode.swift"; sourceTree = "<group>"; };
+		ED0C5A38298E10AC005926EC /* BorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderModifier.swift; sourceTree = "<group>"; };
 		OBJ_10 /* MapAnnotationClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAnnotationClusterView.swift; sourceTree = "<group>"; };
 		OBJ_11 /* MapAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAnnotationView.swift; sourceTree = "<group>"; };
 		OBJ_12 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 				451DD1322400125400CBDA1A /* AppDelegate.swift */,
 				451DD1342400125400CBDA1A /* SceneDelegate.swift */,
 				451DD1362400125400CBDA1A /* ContentView.swift */,
+				ED0C5A38298E10AC005926EC /* BorderModifier.swift */,
 				451DD1472400128300CBDA1A /* ExampleAnnotation.swift */,
 				451DD1452400127500CBDA1A /* CLLocationCoordinate2D+Examples.swift */,
 				451DD13A2400125500CBDA1A /* Preview Content */,
@@ -369,6 +372,7 @@
 				451DD1332400125400CBDA1A /* AppDelegate.swift in Sources */,
 				451DD1352400125400CBDA1A /* SceneDelegate.swift in Sources */,
 				451DD1482400128300CBDA1A /* ExampleAnnotation.swift in Sources */,
+				ED0C5A39298E10AC005926EC /* BorderModifier.swift in Sources */,
 				451DD1372400125400CBDA1A /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

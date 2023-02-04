@@ -16,7 +16,7 @@ struct ContentView: View {
     @State private var region: MKCoordinateRegion? = MKCoordinateRegion(center: .applePark, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
     @State private var trackingMode: MKUserTrackingMode =
         CLLocationManager.headingAvailable() ? .followWithHeading : .follow
-    let annotations: [MapViewAnnotation] = [ExampleAnnotation].examples
+    @State var annotations: [MapViewAnnotation] = [ExampleAnnotation].examples
     @State var selectedAnnotations: [MapViewAnnotation] = []
     
     var body: some View {
@@ -24,7 +24,7 @@ struct ContentView: View {
             MapView(mapType: type,
                     region: $region,
                     userTrackingMode: $trackingMode,
-                    annotations: annotations,
+                    annotations: $annotations,
                     selectedAnnotations: $selectedAnnotations
             ) { tappedAnnotation in
                 print((tappedAnnotation.title ?? "no title")!)
@@ -39,14 +39,24 @@ struct ContentView: View {
                 Text("\( regionToString(region!) )")
             }
             
-            Button(action: {
-                if (trackingMode == .none) {
-                    trackingMode = CLLocationManager.headingAvailable() ? .followWithHeading : .follow
-                } else {
-                    trackingMode = .none
-                }
-            }) {
-                Text("Switch MKUserTrackingMode")
+            HStack {
+                Button(action: {
+                    if (trackingMode == .none) {
+                        trackingMode = CLLocationManager.headingAvailable() ? .followWithHeading : .follow
+                    } else {
+                        trackingMode = .none
+                    }
+                }) {
+                    Text("Switch MKUserTrackingMode")
+                }.modifier(BorderModifier(color: .blue))
+                Button(action: {
+                    guard let region = region else {
+                        return
+                    }
+                    addAnnotation(region)
+                }) {
+                    Text("Add an annotation")
+                }.modifier(BorderModifier(color: .blue))
             }
         }
         .onAppear {
@@ -57,6 +67,12 @@ struct ContentView: View {
     
     func regionToString(_ region: MKCoordinateRegion) -> String {
         "\(region.center.latitude), \(region.center.longitude)"
+    }
+    
+    func addAnnotation(_ region: MKCoordinateRegion) -> Void {
+        DispatchQueue.main.async {
+            annotations.append(ExampleAnnotation(coordinate: region.center, title: "Added annotation"))
+        }
     }
     
     let locationManager = CLLocationManager()
