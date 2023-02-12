@@ -13,6 +13,7 @@ import MapKit
 struct ContentView: View {
     
     let type: MKMapType = .standard
+    @State private var userLocation: MKUserLocation? = nil
     @State private var region: MKCoordinateRegion? = MKCoordinateRegion(center: .applePark, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
     @State private var trackingMode: MKUserTrackingMode =
         CLLocationManager.headingAvailable() ? .followWithHeading : .follow
@@ -24,15 +25,15 @@ struct ContentView: View {
             MapView(mapType: type,
                     showsUserLocationWhenTrackingModeNone: false,
                     region: $region,
+                    userLocation: $userLocation,
                     userTrackingMode: $trackingMode,
                     annotations: $annotations,
                     selectedAnnotations: $selectedAnnotations
-            ) {
-                print("'onLocatingUserWillStart' callback function was executed. region: \( regionToString(region!) )")
-            } onLocatingUserDidStop: {
-                print("'onLocatingUserDidStop' callback function was executed. region: \( regionToString(region!) )")
-            } onAnnotationCalloutTapped: { tappedAnnotation in
+            ) { tappedAnnotation in
                 print((tappedAnnotation.title ?? "no title")!)
+            }
+            .onChange(of: userLocation?.location) { location in
+                //print("\(String(describing: location))")
             }
             .edgesIgnoringSafeArea(.all)
             

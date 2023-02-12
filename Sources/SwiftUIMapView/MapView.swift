@@ -41,6 +41,11 @@ public struct MapView: UIViewRepresentable {
     @Binding var region: MKCoordinateRegion?
     
     /**
+     The location of current user.
+     */
+    @Binding var userLocation: MKUserLocation?
+    
+    /**
      Sets the map's user tracking mode.
      */
     @Binding var userTrackingMode: MKUserTrackingMode
@@ -61,16 +66,6 @@ public struct MapView: UIViewRepresentable {
      Likewise, setting the value of this binding to a value selects the given annotations.
      */
     @Binding var selectedAnnotations: [MapViewAnnotation]
-    
-    /**
-     A closure that be called on locating user will start.
-     */
-    var onLocatingUserWillStart: () -> Void
-    
-    /**
-     A closure that be called on locating user did stop.
-     */
-    var onLocatingUserDidStop: () -> Void
     
     /**
      A closure that be called on the callout of an annotation tapped.
@@ -101,20 +96,18 @@ public struct MapView: UIViewRepresentable {
     public init(mapType: MKMapType = .standard,
                 showsUserLocationWhenTrackingModeNone: Bool = false,
                 region: Binding<MKCoordinateRegion?> = .constant(nil),
+                userLocation: Binding<MKUserLocation?> = .constant(nil),
                 userTrackingMode: Binding<MKUserTrackingMode> = .constant(.none),
                 annotations: Binding<[MapViewAnnotation]> = .constant([]),
                 selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([]),
-                onLocatingUserWillStart: @escaping () -> Void = {},
-                onLocatingUserDidStop: @escaping () -> Void = {},
                 onAnnotationCalloutTapped: @escaping (MapViewAnnotation) -> Void = { _ in }) {
         self.mapType = mapType
         self.showsUserLocationWhenTrackingModeNone = showsUserLocationWhenTrackingModeNone
         self._region = region
+        self._userLocation = userLocation
         self._userTrackingMode = userTrackingMode
         self._annotations = annotations
         self._selectedAnnotations = selectedAnnotations
-        self.onLocatingUserWillStart = onLocatingUserWillStart
-        self.onLocatingUserDidStop = onLocatingUserDidStop
         self.onAnnotationCalloutTapped = onAnnotationCalloutTapped
     }
 
@@ -251,20 +244,25 @@ public struct MapView: UIViewRepresentable {
                     self.context.isUserLocationInitialized = true
                 }
                 self.context.isUserLocationAvailable = true
-                self.context.onLocatingUserWillStart()
             }
         }
         
         public func mapViewDidStopLocatingUser(_ mapView: MKMapView) {
             DispatchQueue.main.async {
                 self.context.isUserLocationAvailable = false
-                self.context.onLocatingUserDidStop()
+                self.context.userLocation = nil
             }
         }
         
         public func mapView(_ mapView: MKMapView, didChange mode: MKUserTrackingMode, animated: Bool) {
             DispatchQueue.main.async {
                 self.context.userTrackingMode = mode
+            }
+        }
+        
+        public func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+            DispatchQueue.main.async {
+                self.context.userLocation = userLocation
             }
         }
         
