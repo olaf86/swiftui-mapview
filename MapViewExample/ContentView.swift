@@ -22,11 +22,16 @@ struct ContentView: View {
     var body: some View {
         VStack {
             MapView(mapType: type,
+                    showsUserLocationWhenTrackingModeNone: false,
                     region: $region,
                     userTrackingMode: $trackingMode,
                     annotations: $annotations,
                     selectedAnnotations: $selectedAnnotations
-            ) { tappedAnnotation in
+            ) {
+                print("'onLocatingUserWillStart' callback function was executed. region: \( regionToString(region!) )")
+            } onLocatingUserDidStop: {
+                print("'onLocatingUserDidStop' callback function was executed. region: \( regionToString(region!) )")
+            } onAnnotationCalloutTapped: { tappedAnnotation in
                 print((tappedAnnotation.title ?? "no title")!)
             }
             .edgesIgnoringSafeArea(.all)

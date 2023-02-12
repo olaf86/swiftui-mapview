@@ -29,6 +29,11 @@ public struct MapView: UIViewRepresentable {
     let mapType: MKMapType
     
     /**
+     Determines whether the current user location is displayed when stop tracking the user location.
+     */
+    let showsUserLocationWhenTrackingModeNone: Bool
+    
+    /**
      The region that is displayed.
      
     Note: The region might not be used as-is, as it might need to be fitted to the view's bounds. See [regionThatFits(_:)](https://developer.apple.com/documentation/mapkit/mkmapview/1452371-regionthatfits).
@@ -58,9 +63,21 @@ public struct MapView: UIViewRepresentable {
     @Binding var selectedAnnotations: [MapViewAnnotation]
     
     /**
+     A closure that be called on locating user will start.
+     */
+    var onLocatingUserWillStart: () -> Void
+    
+    /**
+     A closure that be called on locating user did stop.
+     */
+    var onLocatingUserDidStop: () -> Void
+    
+    /**
      A closure that be called on the callout of an annotation tapped.
      */
     var onAnnotationCalloutTapped: (MapViewAnnotation) -> Void
+    
+    @State private var isUserLocationInitialized: Bool = false
     
     /**
      A Boolean that indicates whether the user location is available.
@@ -82,16 +99,22 @@ public struct MapView: UIViewRepresentable {
         - onAnnotationCalloutTapped: A closure that be called on the callout of an annotation tapped.
      */
     public init(mapType: MKMapType = .standard,
+                showsUserLocationWhenTrackingModeNone: Bool = false,
                 region: Binding<MKCoordinateRegion?> = .constant(nil),
                 userTrackingMode: Binding<MKUserTrackingMode> = .constant(.none),
                 annotations: Binding<[MapViewAnnotation]> = .constant([]),
                 selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([]),
+                onLocatingUserWillStart: @escaping () -> Void = {},
+                onLocatingUserDidStop: @escaping () -> Void = {},
                 onAnnotationCalloutTapped: @escaping (MapViewAnnotation) -> Void = { _ in }) {
         self.mapType = mapType
+        self.showsUserLocationWhenTrackingModeNone = showsUserLocationWhenTrackingModeNone
         self._region = region
         self._userTrackingMode = userTrackingMode
         self._annotations = annotations
         self._selectedAnnotations = selectedAnnotations
+        self.onLocatingUserWillStart = onLocatingUserWillStart
+        self.onLocatingUserDidStop = onLocatingUserDidStop
         self.onAnnotationCalloutTapped = onAnnotationCalloutTapped
     }
 
@@ -124,7 +147,8 @@ public struct MapView: UIViewRepresentable {
         }
         mapView.isZoomEnabled = true
         mapView.isRotateEnabled = true
-        mapView.showsUserLocation = userTrackingMode != .none
+        mapView.showsUserLocation = true
+        mapView.isScrollEnabled = userTrackingMode == .none
     }
 
     public func updateUIView(_ mapView: MKMapView, context: UIViewRepresentableContext<MapView>) {
@@ -147,13 +171,14 @@ public struct MapView: UIViewRepresentable {
      Updates the `UserTrackingMode` of the `MapView`.
      */
     private func updateUserTrackingMode(in mapView: MKMapView) {
-        mapView.isScrollEnabled = userTrackingMode == .none
-        if !isUserLocationAvailable {
+        if !isUserLocationInitialized {
             return
         }
         if mapView.userTrackingMode == userTrackingMode {
             return
         }
+        mapView.isScrollEnabled = userTrackingMode == .none
+        mapView.showsUserLocation = userTrackingMode != .none || showsUserLocationWhenTrackingModeNone
         mapView.setUserTrackingMode(userTrackingMode, animated: true)
     }
     
@@ -222,13 +247,18 @@ public struct MapView: UIViewRepresentable {
         // MARK: MKMapViewDelegate
         public func mapViewWillStartLocatingUser(_ mapView: MKMapView) {
             DispatchQueue.main.async {
+                if (!self.context.isUserLocationInitialized) {
+                    self.context.isUserLocationInitialized = true
+                }
                 self.context.isUserLocationAvailable = true
+                self.context.onLocatingUserWillStart()
             }
         }
         
         public func mapViewDidStopLocatingUser(_ mapView: MKMapView) {
             DispatchQueue.main.async {
                 self.context.isUserLocationAvailable = false
+                self.context.onLocatingUserDidStop()
             }
         }
         
