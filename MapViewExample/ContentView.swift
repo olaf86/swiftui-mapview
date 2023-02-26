@@ -17,8 +17,8 @@ struct ContentView: View {
     @State private var region: MKCoordinateRegion? = MKCoordinateRegion(center: .applePark, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
     @State private var trackingMode: MKUserTrackingMode =
         CLLocationManager.headingAvailable() ? .followWithHeading : .follow
-    @State var annotations: [MapViewAnnotation] = [ExampleAnnotation].examples
-    @State var selectedAnnotations: [MapViewAnnotation] = []
+    @State var annotations: [SwiftUIMapAnnotation] = [ExampleAnnotation].examples
+    @State var selectedAnnotations: [SwiftUIMapAnnotation] = []
     
     var body: some View {
         VStack {

@@ -20,21 +20,21 @@ import MapKit
  - Copyright: 2020 Sören Gade
  */
 @available(iOS, introduced: 13.0)
-public protocol MapViewAnnotation: MKAnnotation {
+public protocol SwiftUIMapAnnotation: MKAnnotation {
     
     /**
      Identifier for clustering annotations. Setting to a non-`nil` value marks the annotation as participant in clustering.
      
-    - SeeAlso: MKAnnotationView.clusteringIdentifier
+     - SeeAlso: MKAnnotationView.clusteringIdentifier
      */
     var clusteringIdentifier: String? {
         get
     }
     
     /**
-     The image to display as a glyph in the annotation's view.
+     The image to display as an icon in the annotation's view.
      */
-    var glyphImage: UIImage? {
+    var iconImage: UIImage? {
         get
     }
     
@@ -45,10 +45,16 @@ public protocol MapViewAnnotation: MKAnnotation {
         get
     }
     
+    /**
+     The image to display as an icon on the left of a callout view.
+     */
     var calloutLeftIconImage: UIImage? {
         get
     }
     
+    /**
+     The image to display as a button on the right of a callout view.
+     */
     var calloutRightButtonImage: UIImage? {
         get
     }

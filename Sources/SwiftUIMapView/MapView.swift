@@ -57,7 +57,7 @@ public struct MapView: UIViewRepresentable {
      
      - SeeAlso: selectedAnnotation
      */
-    @Binding var annotations: [MapViewAnnotation]
+    @Binding var annotations: [SwiftUIMapAnnotation]
     
     /**
      The currently selected annotations.
@@ -65,12 +65,12 @@ public struct MapView: UIViewRepresentable {
      When the user selects annotations on the map the value of this binding changes.
      Likewise, setting the value of this binding to a value selects the given annotations.
      */
-    @Binding var selectedAnnotations: [MapViewAnnotation]
+    @Binding var selectedAnnotations: [SwiftUIMapAnnotation]
     
     /**
      A closure that be called on the callout of an annotation tapped.
      */
-    var onAnnotationCalloutTapped: (MapViewAnnotation) -> Void
+    var onAnnotationCalloutTapped: (SwiftUIMapAnnotation) -> Void
     
     @State private var isUserLocationInitialized: Bool = false
     
@@ -98,9 +98,9 @@ public struct MapView: UIViewRepresentable {
                 region: Binding<MKCoordinateRegion?> = .constant(nil),
                 userLocation: Binding<MKUserLocation?> = .constant(nil),
                 userTrackingMode: Binding<MKUserTrackingMode> = .constant(.none),
-                annotations: Binding<[MapViewAnnotation]> = .constant([]),
-                selectedAnnotations: Binding<[MapViewAnnotation]> = .constant([]),
-                onAnnotationCalloutTapped: @escaping (MapViewAnnotation) -> Void = { _ in }) {
+                annotations: Binding<[SwiftUIMapAnnotation]> = .constant([]),
+                selectedAnnotations: Binding<[SwiftUIMapAnnotation]> = .constant([]),
+                onAnnotationCalloutTapped: @escaping (SwiftUIMapAnnotation) -> Void = { _ in }) {
         self.mapType = mapType
         self.showsUserLocationWhenTrackingModeNone = showsUserLocationWhenTrackingModeNone
         self._region = region
@@ -274,31 +274,19 @@ public struct MapView: UIViewRepresentable {
         
         public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             var annotationView: MKAnnotationView?
-            if let annotation = annotation as? MapViewAnnotation {
+            if let annotation = annotation as? SwiftUIMapAnnotation {
                annotationView = setupMapViewAnnotationView(for: annotation, on: mapView)
             }
             return annotationView
         }
         
-        private func setupMapViewAnnotationView(for annotation: MapViewAnnotation, on mapView: MKMapView) -> MKAnnotationView {
+        private func setupMapViewAnnotationView(for annotation: SwiftUIMapAnnotation, on mapView: MKMapView) -> MKAnnotationView {
             let reuseIndentifier = MKMapViewDefaultAnnotationViewReuseIdentifier
-            let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseIndentifier, for: annotation)
-            annotationView.canShowCallout = true
-            
-            if let leftIconImage = annotation.calloutLeftIconImage {
-                let leftView = UIImageView(image: leftIconImage)
-                annotationView.leftCalloutAccessoryView = leftView
-            }
-            if let rightButtonImage = annotation.calloutRightButtonImage {
-                let rightView = UIButton(type: .detailDisclosure)
-                rightView.setImage(rightButtonImage, for: .normal)
-                annotationView.rightCalloutAccessoryView = rightView
-            }
-            return annotationView
+            return mapView.dequeueReusableAnnotationView(withIdentifier: reuseIndentifier, for: annotation)
         }
         
         public func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-            guard let mapAnnotation = view.annotation as? MapViewAnnotation else {
+            guard let mapAnnotation = view.annotation as? SwiftUIMapAnnotation else {
                 return
             }
             
@@ -310,7 +298,7 @@ public struct MapView: UIViewRepresentable {
         }
         
         public func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-            guard let mapAnnotation = view.annotation as? MapViewAnnotation else {
+            guard let mapAnnotation = view.annotation as? SwiftUIMapAnnotation else {
                 return
             }
             
@@ -320,7 +308,7 @@ public struct MapView: UIViewRepresentable {
         }
         
         public func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-            guard let mapAnnotation = view.annotation as? MapViewAnnotation else {
+            guard let mapAnnotation = view.annotation as? SwiftUIMapAnnotation else {
                 return
             }
             

@@ -13,15 +13,15 @@ extension MKMapView {
     /**
      All `MapAnnotations` set on the map view.
      */
-    var mapViewAnnotations: [MapViewAnnotation] {
-        annotations.compactMap { $0 as? MapViewAnnotation }
+    var mapViewAnnotations: [SwiftUIMapAnnotation] {
+        annotations.compactMap { $0 as? SwiftUIMapAnnotation }
     }
     
     /**
      All `MapAnnotations` selected on the map view.
      */
-    var selectedMapViewAnnotations: [MapViewAnnotation] {
-        selectedAnnotations.compactMap { $0 as? MapViewAnnotation }
+    var selectedMapViewAnnotations: [SwiftUIMapAnnotation] {
+        selectedAnnotations.compactMap { $0 as? SwiftUIMapAnnotation }
     }
     
 }

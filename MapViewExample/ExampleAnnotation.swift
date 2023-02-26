@@ -8,7 +8,7 @@
 import SwiftUIMapView
 import MapKit
 
-class ExampleAnnotation: NSObject, MapViewAnnotation, Identifiable {
+class ExampleAnnotation: NSObject, SwiftUIMapAnnotation, Identifiable {
     
     let coordinate: CLLocationCoordinate2D
     
@@ -20,32 +20,43 @@ class ExampleAnnotation: NSObject, MapViewAnnotation, Identifiable {
     
     let clusteringIdentifier: String? = "exampleCluster"
     
-    let glyphImage: UIImage? = UIImage(systemName: "e.circle.fill")
-    
-    let tintColor: UIColor? = .green
+    let iconImage: UIImage?
     
     let calloutLeftIconImage: UIImage?
     
     let calloutRightButtonImage: UIImage? = UIImage(systemName: "arrow.forward.circle")
     
+    let tintColor: UIColor?
+    
     init(coordinate: CLLocationCoordinate2D,
          title: String,
          subtitle: String? = nil,
-         calloutLeftIconImage: UIImage? = UIImage(systemName: "note.text")
-         ) {
+         iconImage: UIImage? = nil,
+         calloutLeftIconImage: UIImage? = UIImage(systemName: "note.text"),
+         tintColor: UIColor? = .systemBlue) {
         self.coordinate = coordinate
         self.title = title
         self.subtitle = subtitle
+        self.iconImage = iconImage
         self.calloutLeftIconImage = calloutLeftIconImage
+        self.tintColor = tintColor
     }
-    
 }
 
 extension Array where Element == ExampleAnnotation {
     static var examples: [ExampleAnnotation] = {
         [
-            ExampleAnnotation(coordinate: .applePark, title: "Apple Park", subtitle: "Apple Park is the corporate headquarters of Apple Inc."),
-            ExampleAnnotation(coordinate: .inifiniteLoop, title: "Infinite Loop", calloutLeftIconImage: UIImage(systemName: "music.note")),
+            ExampleAnnotation(
+                coordinate: .applePark,
+                title: "Apple Park",
+                subtitle: "Apple Park is the corporate headquarters of Apple Inc."
+            ),
+            ExampleAnnotation(
+                coordinate: .inifiniteLoop,
+                title: "Infinite Loop",
+                iconImage: UIImage(named: "icon1"),
+                calloutLeftIconImage: UIImage(systemName: "music.note")
+            ),
         ]
     }()
 }

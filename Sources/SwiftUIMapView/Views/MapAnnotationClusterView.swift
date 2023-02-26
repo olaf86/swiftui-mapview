@@ -26,7 +26,7 @@ class MapAnnotationClusterView: MKAnnotationView {
                 return
             }
 
-            let mapAnnotations = clusterAnnotation.memberAnnotations.compactMap { $0 as? MapViewAnnotation }
+            let mapAnnotations = clusterAnnotation.memberAnnotations.compactMap { $0 as? SwiftUIMapAnnotation }
             guard let mapAnnotation = mapAnnotations.first else {
                 return
             }
