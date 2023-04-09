@@ -69,31 +69,17 @@ class MapAnnotationView: MKAnnotationView {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         
-        let animationKey = "transform.scale"
-        if selected {
-            layer.sublayers?.forEach { sublayer in
-                let animation = CABasicAnimation(keyPath: animationKey)
-                animation.toValue = CATransform3DMakeScale(0.5, 0.5, 1)
-                animation.duration = 0.2
-                animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
-                animation.isRemovedOnCompletion = false
-                animation.fillMode = .forwards
-                sublayer.add(animation, forKey: animationKey)
-            }
-        } else {
-            layer.sublayers?.forEach { sublayer in
-                let animation = CABasicAnimation(keyPath: animationKey)
-                animation.fromValue = CATransform3DMakeScale(0.5, 0.5, 1)
-                animation.toValue = CATransform3DMakeScale(1, 1, 1)
-                animation.duration = 0.2
-                animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
-                animation.isRemovedOnCompletion = false
-                animation.fillMode = .forwards
-                sublayer.add(animation, forKey: animationKey)
+        super.setSelected(selected, animated: false)
+        
+        let scale = selected ?
+            CGAffineTransform(scaleX: 0.5, y: 0.5) :
+            CGAffineTransform(scaleX: 1, y: 1)
+        
+        layer.sublayers?.forEach { sublayer in
+            UIView.animate(withDuration: 0.2) {
+                sublayer.setAffineTransform(scale)
             }
         }
-        
-        super.setSelected(selected, animated: animated)
     }
     
     private func tinted(_ image: UIImage?, with color: UIColor) -> UIImage? {
