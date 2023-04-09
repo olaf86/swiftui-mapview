@@ -157,7 +157,6 @@ public struct MapView: UIViewRepresentable {
         // annotation configuration
         updateUserTrackingMode(in: mapView)
         updateAnnotations(in: mapView)
-        updateSelectedAnnotation(in: mapView)
     }
     
     /**
@@ -194,34 +193,6 @@ public struct MapView: UIViewRepresentable {
             !currentAnnotations.contains { $0.isEqual(mapViewAnnotation) }
         }
         mapView.addAnnotations(newAnnotations)
-    }
-    
-    /**
-     Updates the selection annotations of the `mapView`.
-     Calculates the difference between the current and new selection states and only executes changes on those diff sets.
-     
-     - Parameter mapView: The `MKMapView` to configure.
-     */
-    private func updateSelectedAnnotation(in mapView: MKMapView) {
-        // deselect annotations that are not currently selected
-        let oldSelections = mapView.selectedMapViewAnnotations.filter { oldSelection in
-            !selectedAnnotations.contains {
-                oldSelection.isEqual($0)
-            }
-        }
-        for annotation in oldSelections {
-            mapView.deselectAnnotation(annotation, animated: false)
-        }
-        
-        // select all new annotations
-        let newSelections = selectedAnnotations.filter { selection in
-            !mapView.selectedMapViewAnnotations.contains {
-                selection.isEqual($0)
-            }
-        }
-        for annotation in newSelections {
-            mapView.selectAnnotation(annotation, animated: true)
-        }
     }
     
     // MARK: - Interaction and delegate implementation
@@ -299,6 +270,10 @@ public struct MapView: UIViewRepresentable {
         
         public func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
             guard let mapAnnotation = view.annotation as? SwiftUIMapAnnotation else {
+                return
+            }
+            
+            if self.context.selectedAnnotations.contains(where: { $0.isEqual(mapAnnotation) }) {
                 return
             }
             
