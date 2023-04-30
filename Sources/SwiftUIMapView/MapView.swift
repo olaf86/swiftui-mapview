@@ -246,8 +246,12 @@ public struct MapView: UIViewRepresentable {
         public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             var annotationView: MKAnnotationView?
             if let annotation = annotation as? SwiftUIMapAnnotation {
-               annotationView = setupMapViewAnnotationView(for: annotation, on: mapView)
+                annotationView = setupMapViewAnnotationView(for: annotation, on: mapView)
+            } else if let userLocation = annotation as? MKUserLocation {
+                annotationView = MKUserLocationView(annotation: userLocation, reuseIdentifier: nil)
+                annotationView?.isEnabled = false
             }
+            
             return annotationView
         }
         
