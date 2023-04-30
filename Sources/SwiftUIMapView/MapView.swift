@@ -19,7 +19,7 @@ import UIKit
  - Author: Sören Gade
  - Copyright: 2020—2022 Sören Gade
  */
-@available(iOS, introduced: 13.0)
+@available(iOS, introduced: 14.0)
 public struct MapView: UIViewRepresentable {
     
     // MARK: Properties
