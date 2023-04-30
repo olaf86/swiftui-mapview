@@ -306,6 +306,7 @@ public struct MapView: UIViewRepresentable {
 // MARK: - Previews
 
 #if DEBUG
+@available(iOS, introduced: 14.0)
 struct MapView_Previews: PreviewProvider {
 
     static var previews: some View {
